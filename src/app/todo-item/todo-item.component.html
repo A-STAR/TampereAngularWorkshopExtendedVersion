@@ -1,3 +1,5 @@
 <div (mouseenter)="hover = true;" (mouseleave)="hover = false;" [class.hover]="hover">
-  {{todo.description}} <button (click)="remove()">Remove</button>
+  {{todo.description}} -- {{todo?.dueTo}}
+  <button (click)="remove()">Remove</button>
+  <button (click)="goEditTodo(todo)">Edit</button>
 </div>

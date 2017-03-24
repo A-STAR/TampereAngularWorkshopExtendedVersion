@@ -22,6 +22,10 @@ export class TodoService {
     return this.todos;
   }
 
+  getTodoById(id) {
+    return this.todos[id];
+  }
+
   addTodo(todo) {
     this.todos.push(todo);
     this.reindex();
@@ -34,11 +38,19 @@ export class TodoService {
 
   removeTodo(todo) {
     const index = this.todos.findIndex(item => item.index === todo.index);
-    console.log(index);
     if(index != -1) {
       this.todos.splice(index, 1);
     }
     this.reindex();
+  }
+
+  saveTodo(todo) {
+    const i = Number(todo.index);
+    this.todos = [
+      ...this.todos.slice(0, i),
+      todo,
+      ...this.todos.slice(i + 1)
+    ];
   }
 
 }

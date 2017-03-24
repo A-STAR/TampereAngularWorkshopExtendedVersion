@@ -1,0 +1,40 @@
+<form [formGroup]="form">
+  <label>Description: </label>
+  <input type="text" formControlName="description">
+  <div *ngIf="form.get('description').invalid && form.get('description').dirty">
+    <div class="error"
+         *ngIf="form.get('description').hasError('required')">
+      This field is required
+    </div>
+  </div>
+  <br>
+
+  <label>Due Date:</label>
+  <input type="text" formControlName="dueTo">
+  <div *ngIf="form.get('dueTo').invalid && form.get('dueTo').dirty">
+    <div class="error"
+         *ngIf="form.get('dueTo').hasError('required')">
+      This field is required
+    </div>
+    <div class="error"
+         *ngIf="form.get('dueTo').hasError('pattern')">
+      Pattern is not right, should be xxxx-xx-xx
+    </div>
+  </div>
+  <br>
+  <label>Assign To:</label>
+  <input type="text" formControlName="assignTo">
+  <div *ngIf="form.get('assignTo').dirty && form.get('assignTo').invalid">
+    <div class="error"
+         *ngIf="form.get('assignTo').hasError('required')">
+      This field is required
+    </div>
+    <div class="error"
+         *ngIf="form.get('assignTo').hasError('minlength')">
+      The minlength is {{minlength}}
+    </div>
+  </div>
+</form>
+
+<button (click)="editTodo(this.form.value, todo.index)" [disabled]="form.invalid">Edit</button>
+<button (click)="back()">Back</button>

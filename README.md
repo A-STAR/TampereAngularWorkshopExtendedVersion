@@ -1,28 +1,110 @@
-# AngularWorkshop
-[![Build Status](https://travis-ci.org/hollannikas/angular-workshop.svg?branch=master)](https://travis-ci.org/hollannikas/angular-workshop)
+# AngularWorkshop II -- extended version
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0-rc.1.
+### Route
+In workshop, we saw one of the routing types -- eager loading.
+Here introduce anther loading type --lazy loading. 
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Difference between lazy loading from eager loading is lazy loading loads module on demand.
+It means it will bundle feature module in a separate bundle file, not included in main bundle.
 
-## Code scaffolding
+It is pretty simple to do:
+1. Add a edit-todo.module.ts file to edit-todo folder, because lazy loading only available for module.
+2. In the AppRoutes, change routes config:
+```
+const appRoutes = [
+  {path: '', component: TodoComponent},
+  {path: 'todo/:id', loadChildren: './edit-todo/edit-todo.module#EditTodoModule'}
+];
+```
+We change 'component' to 'loadChildren', and from actual component to the path of edit-to module file.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
 
-## Build
+### Form
+In the workshop, we saw Template driven approach.
+Here introduce another approach 'Reactive Form'.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+in edit-todo.component.ts:
+1. Include ReactiveFormModule:
+```
+  imports: [
+    ...,
+    ReactiveFormsModule,
+    ...
+  ],
+```
 
-## Running unit tests
+2. Inject 'FormBuilder' to the edit-todo component's constructor:
+```
+  constructor(
+              ...
+              private fb: FormBuilder,
+              ...) {
+  }
+```
+Then use this to build our form in ts file:
+```
+  initForm(todo) {
+    this.form = this.fb.group({
+      description: [
+        todo.description,
+        Validators.required
+      ],
+      dueTo: [
+        this.fp.transform(
+          (todo.dueTo || new Date().toISOString()),
+          'yyyy-MM-dd'
+        ),
+        [
+          Validators.required,
+          Validators.pattern(/^\d{4}-\d{2}-\d{2}$/)
+        ]
+      ],
+      assignTo: [
+        todo.assignTo || '',
+        [
+          Validators.required,
+          Validators.minLength(this.minlength)
+        ]
+      ]
+    });
+  }
+```
+It takes care of initial data and Validation.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Reactive form is good to handle complex form app.
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+### Pipe
 
-## Further help
+In the workshop, we saw how to use Pipe inside template.
+```
+{{todo.dueTo | myDateFormat: 'd.M.yyyy'}}
+```
+There is another approach 'Using pipe as provider':
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+1. Add pipe to the 'providers':
+```
+  providers: [
+    MyDateFormatPipe
+  ]
+```
+
+2. Inject into constructor:
+```
+  constructor(
+              ...
+              private fp: MyDateFormatPipe) {
+  }
+```
+
+Using it in ts file:
+```
+        this.fp.transform(
+          (todo.dueTo || new Date().toISOString()),
+          'yyyy-MM-dd'
+        )
+```
+
+This is just a different approach. Cannot say switch one is better. 
+One possible benefit is that we can check type-safety during compile time by using this approach,
+which is hard to do when you use pipe in your template.
