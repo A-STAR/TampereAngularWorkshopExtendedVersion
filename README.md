@@ -23,7 +23,7 @@ We change 'component' to 'loadChildren', and from actual component to the path o
 In the workshop, we saw Template driven approach.
 Here introduce another approach 'Reactive Form'.
 
-in edit-todo.component.ts:
+in edit-todo.module.ts:
 1. Include ReactiveFormModule:
 ```
   imports: [
